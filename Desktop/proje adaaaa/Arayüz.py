@@ -7,7 +7,7 @@ import pickle  # For loading the trained model from a file
 # Function to load the machine learning model (cached to avoid reloading every time)
 @st.cache_resource()
 def load_model():
-    with open("best_model.pkl", "rb") as f:
+    with open("Desktop/proje adaaaa/best_model.pkl", "rb") as f:
         model = pickle.load(f)
     return model
 

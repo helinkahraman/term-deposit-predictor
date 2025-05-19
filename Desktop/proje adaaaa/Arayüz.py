@@ -7,9 +7,10 @@ import pickle  # For loading the trained model from a file
 # Function to load the machine learning model (cached to avoid reloading every time)
 @st.cache_resource()
 def load_model():
-    with open("Desktop/proje adaaaa/best_model.pkl", "rb") as f:
+    with open("best_model.pkl", "rb") as f:
         model = pickle.load(f)
     return model
+
 
 # Load the model once and store it
 model = load_model()
@@ -110,23 +111,45 @@ def create_interface():
         # Section: Personal Info
         st.markdown('<div class="section"><h4>👤 Personal Information</h4>', unsafe_allow_html=True)
         age = st.number_input("Age", min_value=18, max_value=100)
-        job = st.selectbox("Job", [...])
-        marital = st.selectbox("Marital Status", [...])
-        education = st.selectbox("Education Level", [...])
+        job = st.selectbox("Job", [
+        "admin.", "blue-collar", "entrepreneur", "management", "retired",
+        "self-employed", "services", "student", "technician", "unemployed",
+        "unknown"
+        ])
+        marital = st.selectbox("Marital Status", [
+        "single", "married", "divorced", "unknown"
+        ])
+        education = st.selectbox("Education Level", [
+        "primary", "secondary", "tertiary", "unknown"
+        ])
         st.markdown("</div>", unsafe_allow_html=True)
 
         # Section: Financial
         st.markdown('<div class="section"><h4>💳 Financial Status</h4>', unsafe_allow_html=True)
-        default = st.selectbox("Credit Default?", [...])
-        housing = st.selectbox("Housing Loan?", [...])
-        loan = st.selectbox("Personal Loan?", [...])
+        default = st.selectbox("Credit Default?", [
+        "no", "yes", "unknown"
+        ])
+        housing = st.selectbox("Housing Loan?", [
+        "no", "yes", "unknown"
+        ])
+        loan = st.selectbox("Personal Loan?", [
+        "no", "yes", "unknown"
+        ])
         st.markdown("</div>", unsafe_allow_html=True)
 
         # Section: Contact Info
         st.markdown('<div class="section"><h4>📞 Contact Information</h4>', unsafe_allow_html=True)
-        contact_type = st.selectbox("Contact Type", [...])
-        month = st.selectbox("Month of Contact", [...])
-        day_of_week = st.selectbox("Day of the Week", [...])
+        contact_type = st.selectbox("Contact Type", [
+        "cellular", "telephone"
+        ])
+
+        month = st.selectbox("Month of Contact", [
+        "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug",
+        "sep", "oct", "nov", "dec"
+        ])
+        day_of_week = st.selectbox("Day of the Week", [
+        "mon", "tue", "wed", "thu", "fri"
+        ])
         st.markdown("</div>", unsafe_allow_html=True)
 
         # Section: Campaign Info
@@ -139,7 +162,9 @@ def create_interface():
 
         # Section: Previous Campaign
         st.markdown('<div class="section"><h4>📁 Previous Campaign Outcome</h4>', unsafe_allow_html=True)
-        poutcome = st.selectbox("Outcome of Previous Campaign", [...])
+        poutcome = st.selectbox("Outcome of Previous Campaign", [
+        "nonexistent", "failure", "success"
+        ])
         st.markdown("</div>", unsafe_allow_html=True)
 
         # Section: Economic Indicators
@@ -151,6 +176,8 @@ def create_interface():
         nr_employed = st.number_input("Number of Employees", step=1)
         st.markdown("</div>", unsafe_allow_html=True)
 
+        
+
         # Submit button to run the prediction
         submitted = st.form_submit_button("🔮 Predict")
 
@@ -158,28 +185,61 @@ def create_interface():
         if submitted:
             # Prepare data for prediction
             data = {
-                'age': [age], 'duration': [duration], 'campaign': [campaign],
-                'pdays': [pdays], 'previous': [previous],
-                'emp.var.rate': [emp_var_rate], 'cons.price.idx': [cons_price_idx],
-                'cons.conf.idx': [cons_conf_idx], 'euribor3m': [euribor3m],
-                'nr.employed': [nr_employed],
+            'age': [age],
+            'duration': [duration],
+            'campaign': [campaign],
+            'pdays': [pdays],
+            'previous': [previous],
+            'emp.var.rate': [emp_var_rate],
+            'cons.price.idx': [cons_price_idx],
+            'cons.conf.idx': [cons_conf_idx],
+            'euribor3m': [euribor3m],
+            'nr.employed': [nr_employed],
+            'job_blue-collar': [1 if job == 'blue-collar' else 0],
+            'job_entrepreneur': [1 if job == 'entrepreneur' else 0],
+            'job_housemaid': [1 if job == 'housemaid' else 0],
+            'job_management': [1 if job == 'management' else 0],
+            'job_retired': [1 if job == 'retired' else 0],
+            'job_self-employed': [1 if job == 'self-employed' else 0],
+            'job_services': [1 if job == 'services' else 0],
+            'job_student': [1 if job == 'student' else 0],
+            'job_technician': [1 if job == 'technician' else 0],
+            'job_unemployed': [1 if job == 'unemployed' else 0],
+            'job_unknown': [1 if job == 'unknown' else 0],
+            'marital_married': [1 if marital == 'married' else 0],
+            'marital_single': [1 if marital == 'single' else 0],
+            'marital_unknown': [1 if marital == 'unknown' else 0],
+            'education_basic.6y': [1 if education == 'basic.6y' else 0],
+            'education_basic.9y': [1 if education == 'basic.9y' else 0],
+            'education_high.school': [1 if education == 'high.school' else 0],
+            'education_illiterate': [1 if education == 'illiterate' else 0],
+            'education_professional.course': [1 if education == 'professional.course' else 0],
+            'education_university.degree': [1 if education == 'university.degree' else 0],
+            'education_unknown': [1 if education == 'unknown' else 0],
+            'default_unknown': [1 if default == 'unknown' else 0],
+            'default_yes': [1 if default == 'yes' else 0],
+            'housing_unknown': [1 if housing == 'unknown' else 0],
+            'housing_yes': [1 if housing == 'yes' else 0],
+            'loan_unknown': [1 if loan == 'unknown' else 0],
+            'loan_yes': [1 if loan == 'yes' else 0],
+            'contact_telephone': [1 if contact_type == 'telephone' else 0],
+            'month_aug': [1 if month == 'aug' else 0],
+            'month_dec': [1 if month == 'dec' else 0],
+            'month_jul': [1 if month == 'jul' else 0],
+            'month_jun': [1 if month == 'jun' else 0],
+            'month_mar': [1 if month == 'mar' else 0],
+            'month_may': [1 if month == 'may' else 0],
+            'month_nov': [1 if month == 'nov' else 0],
+            'month_oct': [1 if month == 'oct' else 0],
+            'month_sep': [1 if month == 'sep' else 0],
+            'day_of_week_mon': [1 if day_of_week == 'mon' else 0],
+            'day_of_week_thu': [1 if day_of_week == 'thu' else 0],
+            'day_of_week_tue': [1 if day_of_week == 'tue' else 0],
+            'day_of_week_wed': [1 if day_of_week == 'wed' else 0],
+            'poutcome_nonexistent': [1 if poutcome == 'nonexistent' else 0],
+            'poutcome_success': [1 if poutcome == 'success' else 0]
+             }
 
-                # One-hot encoding for categorical features
-                **{f'job_{j}': [1 if job == j else 0] for j in [...]},
-                **{f'marital_{m}': [1 if marital == m else 0] for m in [...]},
-                **{f'education_{e}': [1 if education == e else 0] for e in [...]},
-                'default_unknown': [1 if default == 'unknown' else 0],
-                'default_yes': [1 if default == 'yes' else 0],
-                'housing_unknown': [1 if housing == 'unknown' else 0],
-                'housing_yes': [1 if housing == 'yes' else 0],
-                'loan_unknown': [1 if loan == 'unknown' else 0],
-                'loan_yes': [1 if loan == 'yes' else 0],
-                'contact_telephone': [1 if contact_type == 'telephone' else 0],
-                **{f'month_{m}': [1 if month == m else 0] for m in [...]},
-                **{f'day_of_week_{d}': [1 if day_of_week == d else 0] for d in [...]},
-                'poutcome_nonexistent': [1 if poutcome == 'nonexistent' else 0],
-                'poutcome_success': [1 if poutcome == 'success' else 0]
-            }
 
             # Convert data to DataFrame for model
             input_df = pd.DataFrame(data)
@@ -191,13 +251,13 @@ def create_interface():
             if prediction == 1:
                 st.markdown("""
                     <div style='background-color:#d4edda; padding:20px; border-radius:10px; border: 2px solid #a0d5a0; margin-top:20px;'>
-                        <h3 style='color:#155724; text-align:center; font-size:28px;'>✅ Prediction: Subscribed (Yes)</h3>
+                        <h3 style='color:#155724; text-align:center; font-size:28px;'>✅ Prediction: Subscribed (Yes). This client is likely to subscribe to a term deposit.</h3>
                     </div>
                 """, unsafe_allow_html=True)
             else:
                 st.markdown("""
                     <div style='background-color:#f8d7da; padding:20px; border-radius:10px; border: 2px solid #e8a4a7; margin-top:20px;'>
-                        <h3 style='color:#721c24; text-align:center; font-size:28px;'>❌ Prediction: Not Subscribed (No)</h3>
+                        <h3 style='color:#721c24; text-align:center; font-size:28px;'>❌ Prediction: Not Subscribed (No). This client is not likely to subscribe. </h3>
                     </div>
                 """, unsafe_allow_html=True)
 
@@ -274,6 +334,14 @@ router = StreamlitRouter()
 router.register(welcome_page, "/")            # Register welcome page
 router.register(create_interface, "/data_input")  # Register prediction input page
 router.serve()  # Start the router
+
+
+
+
+
+
+
+
 
 
 
